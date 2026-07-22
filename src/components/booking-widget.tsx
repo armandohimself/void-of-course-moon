@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { Slot } from "@/lib/types";
 
@@ -14,6 +14,8 @@ type AvailabilityResponse = {
 
 type BookingWidgetProps = {
   chromeless?: boolean;
+  initialAvailability: AvailabilityResponse | null;
+  initialError?: string | null;
 };
 
 function badgeText(slot: Slot) {
@@ -40,25 +42,35 @@ function formatSlot(dateIso: string, timeZone: string) {
   }).format(new Date(dateIso));
 }
 
-export function BookingWidget({ chromeless = false }: BookingWidgetProps) {
-  const [availability, setAvailability] = useState<AvailabilityResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function BookingWidget({
+  chromeless = false,
+  initialAvailability,
+  initialError = null,
+}: BookingWidgetProps) {
+  const [availability, setAvailability] = useState<AvailabilityResponse | null>(initialAvailability);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(initialError);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [visitorName, setVisitorName] = useState("");
   const [visitorEmail, setVisitorEmail] = useState("");
   const [bookingState, setBookingState] = useState<"idle" | "submitting" | "confirmed">("idle");
   const [bookingMessage, setBookingMessage] = useState<string | null>(null);
 
-  const from = useMemo(() => new Date(), []);
-  const to = useMemo(() => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), []);
+  const range = useState(() => {
+    const from = new Date();
+    const to = new Date(from.getTime() + 14 * 24 * 60 * 60 * 1000);
+    return { from, to };
+  })[0];
 
   async function loadAvailability() {
     setLoading(true);
     setError(null);
 
     try {
-      const params = new URLSearchParams({ from: from.toISOString(), to: to.toISOString() });
+      const params = new URLSearchParams({
+        from: range.from.toISOString(),
+        to: range.to.toISOString(),
+      });
       const response = await fetch(`/api/availability?${params.toString()}`);
       const payload = await response.json();
       if (!response.ok) {
@@ -72,11 +84,6 @@ export function BookingWidget({ chromeless = false }: BookingWidgetProps) {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    void loadAvailability();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   async function handleBooking() {
     if (!selectedSlot) {

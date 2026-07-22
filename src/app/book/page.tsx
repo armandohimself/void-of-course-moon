@@ -1,6 +1,21 @@
-import { BookingWidget } from "@/components/booking-widget";
+import { addDays } from "date-fns";
 
-export default function BookingPage() {
+import { BookingWidget } from "@/components/booking-widget";
+import { getAvailabilityResponse } from "@/lib/availability";
+
+export default async function BookingPage() {
+  const from = new Date();
+  const to = addDays(from, 14);
+  let initialAvailability = null;
+  let initialError: string | null = null;
+
+  try {
+    initialAvailability = await getAvailabilityResponse(from, to);
+  } catch (error) {
+    initialError =
+      error instanceof Error ? error.message : "Unable to load initial availability.";
+  }
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-6 py-12">
       <div className="max-w-2xl space-y-3">
@@ -10,7 +25,7 @@ export default function BookingPage() {
           Pick an available slot, review the VOC Moon blocks, then confirm your booking before anything is written to Google Calendar.
         </p>
       </div>
-      <BookingWidget />
+      <BookingWidget initialAvailability={initialAvailability} initialError={initialError} />
     </main>
   );
 }
