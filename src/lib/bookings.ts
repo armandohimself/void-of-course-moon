@@ -1,13 +1,16 @@
 import "server-only";
 
+import isEmailValidator from "validator/es/lib/isEmail";
+
 import { getStoredRefreshToken, insertCalendarEvent } from "@/lib/google";
 import { getAvailabilityResponse } from "@/lib/availability";
 import { getSupabaseAdmin, hasSupabaseConfig } from "@/lib/supabase";
 
 function isEmail(value: string) {
-  return /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(
-    value,
-  );
+  return isEmailValidator(value, {
+    allow_utf8_local_part: true,
+    require_tld: true,
+  });
 }
 
 export async function createBooking(input: {

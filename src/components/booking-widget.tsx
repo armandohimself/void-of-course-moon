@@ -61,6 +61,8 @@ export function BookingWidget({
     const to = new Date(from.getTime() + 14 * 24 * 60 * 60 * 1000);
     return { from, to };
   })[0];
+  const confirmationTimeZone =
+    availability?.hostTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   async function loadAvailability() {
     setLoading(true);
@@ -151,9 +153,6 @@ export function BookingWidget({
 
     return Array.from(groups.values());
   }, [availability]);
-
-  const confirmationTimeZone =
-    availability?.hostTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   return (
     <div className={chromeless ? "" : "rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"}>

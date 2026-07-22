@@ -163,6 +163,7 @@ export function computeVocWindows(from: Date, to: Date, bodySet: BodySet): VocWi
   for (let index = 0; index < ingresses.length - 1; index += 1) {
     const transitStart = ingresses[index];
     const transitEnd = ingresses[index + 1];
+    // If there are no exact aspects before the Moon leaves the sign, the whole transit is VOC.
     const lastAspect = findLastAspectInTransit(transitStart, transitEnd, bodySet) ?? transitStart;
 
     if (transitEnd > from && lastAspect < to) {
