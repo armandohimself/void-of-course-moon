@@ -7,6 +7,9 @@ const ASPECTS = [0, 60, 90, 120, 180] as const;
 const INGRESS_SCAN_STEP_MS = 6 * 60 * 60 * 1000;
 const ASPECT_SCAN_STEP_MS = 30 * 60 * 1000;
 const ROOT_TOLERANCE_MS = 1000;
+// The Moon only moves a fraction of a degree in a 30-minute scan step, but this wider
+// threshold keeps the coarse search focused on nearby aspect crossings while still
+// tolerating circular-angle wraparound and slower-moving planet geometry.
 const ASPECT_BRACKETING_THRESHOLD_DEGREES = 20;
 
 const BODY_SETS: Record<BodySet, Body[]> = {
@@ -120,8 +123,6 @@ function findLastAspectInTransit(start: Date, end: Date, bodySet: BodySet) {
             (previousValue < 0 && nextValue > 0) ||
             (previousValue > 0 && nextValue < 0);
 
-          // The Moon can move more than 15 degrees per day, so a 20-degree filter safely
-          // keeps coarse scan brackets near the target aspect without missing real crossings.
           if (
             crossesZero &&
             (Math.abs(previousValue) < ASPECT_BRACKETING_THRESHOLD_DEGREES ||
@@ -151,6 +152,9 @@ export function computeVocWindows(from: Date, to: Date, bodySet: BodySet): VocWi
     return [];
   }
 
+  // A Moon sign transit lasts less than 3 days, so padding backward by 4 days ensures
+  // we capture the ingress that opens the first transit touching the requested range.
+  // Padding forward by 1 extra day ensures we still see the closing ingress just after `to`.
   const paddedStart = addDays(from, -4);
   const paddedEnd = addDays(to, 1);
   const ingresses = findMoonIngresses(paddedStart, paddedEnd);

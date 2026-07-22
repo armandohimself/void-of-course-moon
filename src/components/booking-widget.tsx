@@ -111,7 +111,9 @@ export function BookingWidget({
       }
 
       setBookingState("confirmed");
-      setBookingMessage(`Confirmed for ${formatSlot(selectedSlot.startsAt, availability?.hostTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone)}.`);
+      setBookingMessage(
+        `Confirmed for ${formatSlot(selectedSlot.startsAt, confirmationTimeZone)}.`,
+      );
       await loadAvailability();
     } catch (submitError) {
       setBookingState("idle");
@@ -149,6 +151,9 @@ export function BookingWidget({
 
     return Array.from(groups.values());
   }, [availability]);
+
+  const confirmationTimeZone =
+    availability?.hostTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   return (
     <div className={chromeless ? "" : "rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"}>

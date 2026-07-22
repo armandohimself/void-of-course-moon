@@ -5,7 +5,9 @@ import { getAvailabilityResponse } from "@/lib/availability";
 import { getSupabaseAdmin, hasSupabaseConfig } from "@/lib/supabase";
 
 function isEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  return /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(
+    value,
+  );
 }
 
 export async function createBooking(input: {

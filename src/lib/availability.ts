@@ -94,6 +94,8 @@ async function ensureVocCache(from: Date, to: Date, bodySet: BodySet) {
 
   const latestEnd = latestWindow?.ends_at ? new Date(latestWindow.ends_at) : null;
   if (!latestEnd || latestEnd < to) {
+    // Recompute slightly before the cached tail so adjacent Moon transits overlap cleanly.
+    // A 5-day cold-start pad safely reaches the transit already in progress before `from`.
     const computeFrom = latestEnd ? addDays(latestEnd, -3) : addDays(from, -5);
     const computed = computeVocWindows(computeFrom, addDays(to, 2), bodySet);
 

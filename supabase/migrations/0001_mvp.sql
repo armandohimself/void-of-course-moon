@@ -15,7 +15,13 @@ insert into host_config (id, timezone, availability_rules, meeting_duration_minu
 values (
   1,
   'America/New_York',
-  '{"1":[{"start":"09:00","end":"17:00"}],"2":[{"start":"09:00","end":"17:00"}],"3":[{"start":"09:00","end":"17:00"}],"4":[{"start":"09:00","end":"17:00"}],"5":[{"start":"09:00","end":"17:00"}]}'::jsonb,
+  '{
+    "1": [{"start":"09:00","end":"17:00"}],
+    "2": [{"start":"09:00","end":"17:00"}],
+    "3": [{"start":"09:00","end":"17:00"}],
+    "4": [{"start":"09:00","end":"17:00"}],
+    "5": [{"start":"09:00","end":"17:00"}]
+  }'::jsonb,
   30,
   'modern'
 )
