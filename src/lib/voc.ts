@@ -152,9 +152,10 @@ export function computeVocWindows(from: Date, to: Date, bodySet: BodySet): VocWi
     return [];
   }
 
-  // A Moon sign transit lasts less than 3 days, so padding backward by 4 days ensures
-  // we capture the ingress that opens the first transit touching the requested range.
-  // Padding forward by 1 extra day ensures we still see the closing ingress just after `to`.
+  // A Moon sign transit lasts less than 3 days, so a 4-day backward pad gives us a full
+  // extra-day safety margin while guaranteeing we capture the ingress that opened the
+  // first transit touching the requested range. Padding forward by 1 extra day ensures
+  // we still see the closing ingress just after `to`.
   const paddedStart = addDays(from, -4);
   const paddedEnd = addDays(to, 1);
   const ingresses = findMoonIngresses(paddedStart, paddedEnd);
