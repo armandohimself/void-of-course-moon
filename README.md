@@ -34,7 +34,7 @@ Copy `.env.example` to `.env.local` and fill in every value:
    npm install
    ```
 2. Create `.env.local` from `.env.example`.
-3. Apply the SQL in `/home/runner/work/void-of-course-moon/void-of-course-moon/supabase/migrations/0001_mvp.sql` to your Supabase project.
+3. Apply the SQL in `supabase/migrations/0001_mvp.sql` to your Supabase project.
 4. Update the `host_config` row with your weekly availability JSON, timezone, duration, and preferred `body_set` (`modern` or `traditional`).
 5. Start the app:
    ```bash

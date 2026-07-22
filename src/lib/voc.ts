@@ -7,6 +7,7 @@ const ASPECTS = [0, 60, 90, 120, 180] as const;
 const INGRESS_SCAN_STEP_MS = 6 * 60 * 60 * 1000;
 const ASPECT_SCAN_STEP_MS = 30 * 60 * 1000;
 const ROOT_TOLERANCE_MS = 1000;
+const ASPECT_BRACKETING_THRESHOLD_DEGREES = 20;
 
 const BODY_SETS: Record<BodySet, Body[]> = {
   modern: [
@@ -119,7 +120,13 @@ function findLastAspectInTransit(start: Date, end: Date, bodySet: BodySet) {
             (previousValue < 0 && nextValue > 0) ||
             (previousValue > 0 && nextValue < 0);
 
-          if (crossesZero && (Math.abs(previousValue) < 20 || Math.abs(nextValue) < 20)) {
+          // The Moon can move more than 15 degrees per day, so a 20-degree filter safely
+          // keeps coarse scan brackets near the target aspect without missing real crossings.
+          if (
+            crossesZero &&
+            (Math.abs(previousValue) < ASPECT_BRACKETING_THRESHOLD_DEGREES ||
+              Math.abs(nextValue) < ASPECT_BRACKETING_THRESHOLD_DEGREES)
+          ) {
             const root = bisectRoot(previousTime, cursor, (date) =>
               signedAngleDelta(separationLongitude(body, date), target),
             );
