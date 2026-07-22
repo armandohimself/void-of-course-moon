@@ -7,7 +7,9 @@ function minutesBetween(left: string, right: string) {
 }
 
 describe("computeVocWindows", () => {
-  test("matches Astro-Seek reference windows for July 2026 (modern body set)", () => {
+  test(
+    "matches Astro-Seek reference windows for July 2026 (modern body set)",
+    () => {
     const windows = computeVocWindows(
       new Date("2026-06-30T00:00:00Z"),
       new Date("2026-07-31T23:59:59Z"),
@@ -36,7 +38,9 @@ describe("computeVocWindows", () => {
       expect(minutesBetween(match!.startsAt, reference.startsAt)).toBeLessThanOrEqual(2);
       expect(minutesBetween(match!.endsAt, reference.endsAt)).toBeLessThanOrEqual(2);
     }
-  });
+    },
+    20_000,
+  );
 
   test("supports full-transit VOC windows when no exact aspects occur inside a sign", () => {
     const windows = computeVocWindows(

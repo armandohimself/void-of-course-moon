@@ -3,6 +3,8 @@ import { addDays } from "date-fns";
 import { BookingWidget } from "@/components/booking-widget";
 import { getAvailabilityResponse } from "@/lib/availability";
 
+export const dynamic = "force-dynamic";
+
 export default async function BookingPage() {
   const from = new Date();
   const to = addDays(from, 14);

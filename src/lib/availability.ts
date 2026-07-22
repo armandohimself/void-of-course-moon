@@ -4,6 +4,7 @@ import { addDays, addMinutes, format, parseISO } from "date-fns";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 
 import { listBusyIntervals } from "@/lib/google";
+import { getStoredRefreshToken } from "@/lib/google";
 import { getResolvedHostConfig, hasSupabaseConfig, getSupabaseAdmin } from "@/lib/supabase";
 import { computeVocWindows } from "@/lib/voc";
 import type { BodySet, Interval, Slot, SlotBlocker, VocWindow, WeeklyAvailability } from "@/lib/types";
@@ -161,6 +162,7 @@ export async function getAvailabilityResponse(from: Date, to: Date) {
     listBusyIntervals(from, to),
     listBookedIntervals(from, to),
   ]);
+  const googleConnected = Boolean(await getStoredRefreshToken());
 
   const slots = buildSlots(baseIntervals, hostConfig.meetingDurationMinutes, [
     ...vocWindows.map((interval) => ({ kind: "voc" as const, interval })),
@@ -175,7 +177,7 @@ export async function getAvailabilityResponse(from: Date, to: Date) {
     vocWindows,
     slots,
     bookableSlots: slots.filter((slot) => slot.status === "available"),
-    googleConnected: (await listBusyIntervals(from, to)).length > 0 || Boolean(await import("@/lib/google").then((m) => m.getStoredRefreshToken())),
+    googleConnected,
   };
 }
 
